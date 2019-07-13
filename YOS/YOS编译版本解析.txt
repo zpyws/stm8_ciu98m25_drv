@@ -1,0 +1,11 @@
+2015-04-21 by zpyws
+
+YOS-R0: Release版本，CPU使用率统计关闭，堆栈统计关闭
+YOS-R1: Release版本，CPU使用率统计打开，堆栈统计关闭
+YOS-R2: Release版本，CPU使用率统计关闭，堆栈统计打开
+YOS-R3: Release版本，CPU使用率统计打开，堆栈统计打开
+
+YOS-D0: Debug版本，CPU使用率统计关闭，堆栈统计关闭
+YOS-D1: Debug版本，CPU使用率统计打开，堆栈统计关闭
+YOS-D2: Debug版本，CPU使用率统计关闭，堆栈统计打开
+YOS-D3: Debug版本，CPU使用率统计打开，堆栈统计打开
