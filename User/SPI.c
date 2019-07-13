@@ -1,7 +1,7 @@
 #include "common_zpyws.h"
 //**********************function prototype**********************************************************************
 #define USE_SOFT_SPI		0//使用模拟SPI方式
-#define SPI_BPS				SPI_BPS_PCLK_PS_128
+#define SPI_BPS				SPI_BPS_PCLK_PS_2
 //******内部私有宏***********************************************************************************************************
 //2013-02-26 by zpyws
 #define SPI_BPS_PCLK_PS_2	0//SPI时钟为外设时钟的2分频
@@ -36,7 +36,7 @@ extern void SPI_Init(void)
 
 	SBF(CLK->PCKENR1, CLK_PCKENR1_SPI);//使能外设时钟
 //================================================================================
-	SPI->CR1 = CC(SPI_CR1_LSBFIRST)|CC(SPI_CR1_SPE)|(SPI_BPS<<BR0)|(SPI_CR1_MSTR)|CC(SPI_CR1_CPOL)|(SPI_CR1_CPHA);//MSB first,禁能SPI，速率为时钟二分频，当主机,空闲时钟线为低，第一个时钟跳变沿锁存数据
+	SPI->CR1 = CC(SPI_CR1_LSBFIRST)|CC(SPI_CR1_SPE)|(SPI_BPS<<BR0)|(SPI_CR1_MSTR)|CC(SPI_CR1_CPOL)|CC(SPI_CR1_CPHA);//MSB first,禁能SPI，速率为时钟二分频，当主机,空闲时钟线为低，第一个时钟跳变沿锁存数据
 	SPI->CR2 = CC(SPI_CR2_BDM)|CC(SPI_CR2_BDOE)|CC(SPI_CR2_CRCEN)|CC(SPI_CR2_CRCNEXT)|CC(SPI_CR2_RXONLY)|(SPI_CR2_SSM)|(SPI_CR2_SSI);//两线制,,禁能CRC,,非只接收模式,软件方式管理从机，主机模式
 //	SPI_CRCPR = 0x07;//SPI CRC polynomial register The CRC polynomial (0x07) is the reset value of this register. You can configure an other polynomial as required for your application
 //	SPI_ICR = CC(TXIE)|CC(RXIE)|CC(ERRIE)|CC(WKIE);//发送空中断，接收不空中断，出错中断，唤醒中断
