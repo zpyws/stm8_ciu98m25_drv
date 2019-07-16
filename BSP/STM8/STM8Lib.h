@@ -23,6 +23,15 @@
 #define CPU_DIV_32   (5<<CPU_DIV)//CPU时钟上频率为对PCLK时钟一分频
 #define CPU_DIV_64   (6<<CPU_DIV)//CPU时钟上频率为对PCLK时钟一分频
 #define CPU_DIV_128  (7<<CPU_DIV)//CPU时钟上频率为对PCLK时钟一分频
+//******向断向量定义************************************************************************
+#define TLI_vector                       0x02
+#define AWU_vector                       0x03
+#define CLK_vector                       0x04
+#define EXTIA_vector                     0x05
+#define EXTIB_vector                     0x06
+#define EXTIC_vector                     0x07
+#define EXTID_vector                     0x08
+#define EXTIE_vector                     0x09
 //******************************************************************************
 extern void SetHsiDiv(uint8 pclk_div, uint8 cpu_div);
 extern void InitPeripheralClock(void);
