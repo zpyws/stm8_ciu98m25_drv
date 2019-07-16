@@ -5,6 +5,7 @@
 
 #define CIU98M25_SPI_INIT()         SPI_Init()
 #define CIU98M25_SPI_TRANSFER(a)    SPI_TransferByte(a)
+#define CIU98M25_SPI_SEND(a,b)    	spi_burst_send(a,b)
 
 #define CIU98M25_CS_PORT			PA
 #define CIU98M25_CS_PIN				3
@@ -72,12 +73,30 @@ extern sint8 ciu98m25_init(void)
     return 0;
 }
 //************************************************************************************************************
+//by yangwensen@20190716
+static uint8 calc_check_code(uint8 *buff, uint16 len)
+{
+  	uint8 check_code = 0;
+	
+  	while(len--)
+	{
+	  	check_code ^= *buff++;
+	}
+	return ~check_code;
+}
+//************************************************************************************************************
+//by yangwensen@20190717
+static void spi_burst_send(uint8 *buff, uint8 len)
+{
+ 	while(len--)
+	{
+	  	CIU98M25_SPI_TRANSFER(*buff++);
+	}
+}
+//************************************************************************************************************
 static sint8 ciu98m25_write(uint8 *buff, uint16 len)
 {
-  	uint8 i,j;
-  	uint8 packs;
-	uint8 last_pack_bytes;
-	uint8 check_code = 0;
+	uint8 check_code;
 	
 	//send sync
 	CIU98M25_CS_ASSERT();
@@ -95,7 +114,18 @@ static sint8 ciu98m25_write(uint8 *buff, uint16 len)
 	CIU98M25_CS_ASSERT();
 	CIU98M25_SPI_TRANSFER(len>>8);
 	CIU98M25_SPI_TRANSFER(len&0x00ff);
+
+	check_code = calc_check_code(buff, len);
+	
+	if(len<=13)		//first pack = last pack
+	{
+		goto SEND_LAST_PACK;
+	}
+	
+	CIU98M25_SPI_SEND(buff, 13);
 	CIU98M25_CS_DEASSERT();
+	buff += 13;
+	len -= 13;
 	
 	OSSemCreate(&sem_ciu98m25_ready, 0);
 	if( OSSemPend(&sem_ciu98m25_ready, CIU98M25_WRITE_TIMEOUT)!=OS_NO_ERR )
@@ -103,56 +133,33 @@ static sint8 ciu98m25_write(uint8 *buff, uint16 len)
 		return -3;
 	}
 //==============================================================================
-	packs = len / 16;
-	last_pack_bytes = len % 16;
-	
-	for(i=0; i<len; i++)
-	{
-	  	check_code ^= buff[i];
-	}
-	check_code = ~check_code;
-//==============================================================================
-	//send 16-byte data	
-	for(i=0; i<packs; i++)
+	//middle full packet(16 bytes)
+	while(len>16)
 	{
 		CIU98M25_CS_ASSERT();
-	  	for(j=0; j<16; j++)
-		{
-			CIU98M25_SPI_TRANSFER(*buff++);
-		}
+		CIU98M25_SPI_SEND(buff, 16);
 		CIU98M25_CS_DEASSERT();
-		
+		buff += 16;
+		len -= 16;
+	  	
+		OSSemCreate(&sem_ciu98m25_ready, 0);
 		if( OSSemPend(&sem_ciu98m25_ready, CIU98M25_WRITE_TIMEOUT)!=OS_NO_ERR )
 		{
 			return -4;
 		}
 	}
-//==============================================================================
-	//send last pack data(less than 16 bytes)
-	if(last_pack_bytes)
-	{
-		CIU98M25_CS_ASSERT();
-		for(j=0; j<last_pack_bytes; j++)
-		{
-			CIU98M25_SPI_TRANSFER(*buff++);
-		}
-		CIU98M25_CS_DEASSERT();
-		
-		if( OSSemPend(&sem_ciu98m25_ready, CIU98M25_WRITE_TIMEOUT)!=OS_NO_ERR )
-		{
-			return -5;
-		}
-	}
 //==============================================================================	
-	//send check_code
+	//send last pack data(less than 16 bytes)
+SEND_LAST_PACK:
 	CIU98M25_CS_ASSERT();
+	CIU98M25_SPI_SEND(buff, len);
 	CIU98M25_SPI_TRANSFER(check_code);
 	CIU98M25_CS_DEASSERT();
-	
+  
 	OSSemCreate(&sem_ciu98m25_ready, 0);
 	if( OSSemPend(&sem_ciu98m25_ready, CIU98M25_WRITE_TIMEOUT)!=OS_NO_ERR )
 	{
-		return -6;
+		return -5;
 	}
 //==============================================================================
 	return 0;

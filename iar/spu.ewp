@@ -1551,6 +1551,9 @@
   <group>
     <name>User</name>
     <file>
+      <name>$PROJ_DIR$\..\User\ciu98m25.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\User\main.c</name>
     </file>
     <file>
