@@ -86,6 +86,15 @@
 	#define _IO_MODE_PU(port,pin)     	port##->CR1 |= (1<<(pin))
 	#define IO_MODE_PU(port,pin)      	_IO_MODE_PU(port,pin)
 	
+	//将某一输入口设置外部中断输入脚 2012-12-25 by zpyws
+	#define _IO_INT_EN(port,pin)        port##->CR2 |= (1<<(pin))
+	#define IO_INT_EN(port,pin)         _IO_INT_EN(port,pin)
+	
+	
+	//将某一输入口禁用外部中断输入脚 2012-12-25 by zpyws
+	#define _IO_INT_DIS(port,pin)       port##_CR2 &= ~(1<<(pin))
+	#define IO_INT_DIS(port,pin)        _IO_INT_DIS(port,pin)
+
 	//将某一输出口输出高电平 2012-12-25 by zpyws
 	#define _IO_SET(port,pin)     	port##->ODR |= (1<<(pin))
 	#define IO_SET(port,pin)      	_IO_SET(port,pin)
