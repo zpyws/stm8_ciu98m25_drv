@@ -2,7 +2,10 @@
 
 #include "common_zpyws.h"
 #include "SPI.h"
-
+//***********************************************************************************************************
+#define EN_SPU_DEBUG				0
+#define EN_SPU_TEST					0
+//***********************************************************************************************************
 #define CIU98M25_SPI_INIT()         SPI_Init()
 #define CIU98M25_SPI_TRANSFER(a)    SPI_TransferByte(a)
 #define CIU98M25_SPI_SEND(a,b)    	spi_burst_send(a,b)
@@ -25,8 +28,14 @@
 //***********************************************************************************************************
 static OS_SEM_t sem_ciu98m25_ready;	//ciu98m25 has received mcu's data or ciu98m25 has data to send.
 //***********************************************************************************************************
-static void print_error_code(uint8 *str, uint8 strlen, sint8 err);
-#define PRINT_ERROR_CODE(str,err)		print_error_code(str,sizeof(str)-1,err)
+#if EN_SPU_DEBUG
+	static void print_error_code(uint8 *str, uint8 strlen, sint8 err);
+	#define PRINT_ERROR_CODE(str,err)		print_error_code(str,sizeof(str)-1,err)
+	#define CIU98M25_PRINT_STRING(a)		UART1_PRINT_STRING(a)
+#else
+	#define PRINT_ERROR_CODE(str,err)	
+	#define CIU98M25_PRINT_STRING(a)			
+#endif
 //***********************************************************************************************************
 static void ciu98m25_io_init(void)
 {
@@ -36,9 +45,6 @@ static void ciu98m25_io_init(void)
 	IO_MODE_PP(CIU98M25_CS_PORT, CIU98M25_CS_PIN);
   	CIU98M25_CS_DEASSERT();
 	
-//    IO_IN(CIU98M25_BUSY_PORT, CIU98M25_BUSY_PIN);
-//    IO_MODE_PU(CIU98M25_BUSY_PORT, CIU98M25_BUSY_PIN);
-
     IO_IN(CIU98M25_SLEEP_PORT, CIU98M25_SLEEP_PIN);
     IO_MODE_PU(CIU98M25_SLEEP_PORT, CIU98M25_SLEEP_PIN);
 //===============================================================================================    
@@ -293,11 +299,12 @@ extern sint16 ciu98m25_transfer(uint8 *tbuff, uint16 tlen, uint8 *rbuff, uint16 
 	}
 //==============================================================================
 	IO_SET(CIU98M25_SLEEP_PORT, CIU98M25_SLEEP_PIN);
-	UART1_PRINT_STRING("[Y]ciu98m25_transfer ok\r\n");
+	CIU98M25_PRINT_STRING("[Y]ciu98m25_transfer ok\r\n");
 	
 	return read_len;
 }
 //************************************************************************************************************
+#if EN_SPU_DEBUG
 static void print_error_code(uint8 *str, uint8 strlen, sint8 err)
 {
   	err = -err;
@@ -312,7 +319,9 @@ static void print_error_code(uint8 *str, uint8 strlen, sint8 err)
 
 	OSSemPost(&SemUart1Tx);//ÊÍ·Å×ÊÔ´
 }
+#endif
 //************************************************************************************************************
+#if EN_SPU_TEST
 //by yangwensen@20190715
 uint8 spu_rx_buff[255];
 extern void ciu98m25_test(void)
@@ -325,4 +334,5 @@ extern void ciu98m25_test(void)
 	else PrintHexArray(spu_rx_buff, len);
 	
 }
+#endif
 //************************************************************************************************************
