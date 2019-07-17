@@ -122,10 +122,10 @@ static sint8 ciu98m25_write(uint8 *buff, uint16 len)
 		goto SEND_LAST_PACK;
 	}
 	
-	CIU98M25_SPI_SEND(buff, 13);
+	CIU98M25_SPI_SEND(buff, 14);
 	CIU98M25_CS_DEASSERT();
-	buff += 13;
-	len -= 13;
+	buff += 14;
+	len -= 14;
 	
 	OSSemCreate(&sem_ciu98m25_ready, 0);
 	if( OSSemPend(&sem_ciu98m25_ready, CIU98M25_WRITE_TIMEOUT)!=OS_NO_ERR )
@@ -134,7 +134,7 @@ static sint8 ciu98m25_write(uint8 *buff, uint16 len)
 	}
 //==============================================================================
 	//middle full packet(16 bytes)
-	while(len>16)
+	while(len>=16)
 	{
 		CIU98M25_CS_ASSERT();
 		CIU98M25_SPI_SEND(buff, 16);
