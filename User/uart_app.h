@@ -2,7 +2,7 @@
 #define RS485_H
 //******************************************************************************************************************************
 extern void RS485_Init(void);
-extern void UartRxDataProcess(uint8 *buff, uint8 len);
+extern void UartRxDataProcess(uint8 *buff, uint16 len);
 extern void RS485_Send(uint8 *buff,uint8 len);
 //******************************************************************************************************************************
 #define MODBUS_FRAME_SIZE_MIN     4       /*!< Minimum size of a Modbus RTU frame. */

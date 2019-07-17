@@ -1,4 +1,5 @@
 #include "common_zpyws.h"
+#include "ciu98m25.h"
 /************************************************************************************************************
 2013-03-05  17:00 完成YOS FOR STM8L152C6T6版本的移植
 2013-03-07  11:41 YOS内存管理函数和邮箱功能测试ro-code=4976 ro-data=747 rw-data=1039
@@ -7,16 +8,16 @@
 2014-04-22  10:03 STM8S103+YOS-STM8S103-V150421A debug版code=5078 const=740 data=916
 2014-04-22  10:06 STM8S103+YOS-STM8S103-V150421A release版code=4035 const=740 data=916
 ************************************************************************************************************/
-#define UART_PRINT_BOOT_INFO        1
-#define UART_PRINT_OS_RUN_TIME		1
+#define UART_PRINT_BOOT_INFO        0
+#define UART_PRINT_OS_RUN_TIME		0
 
 #define OS_TICK_FROM_TIM4
 //******************************************************************************************************************************
-OS_STK_t TaskAStack[100];
-OS_STK_t TaskBStack[80];
+//OS_STK_t TaskAStack[150];
+//OS_STK_t TaskBStack[80];
 //OS_STK_t TaskCStack[100];
-OS_STK_t TaskUart1Stack[120];
-OS_STK_t TaskStartStack[120];
+OS_STK_t TaskUart1Stack[90];
+OS_STK_t TaskStartStack[80];
 //******************************************************************************************************************************
 static void OSCPUInit(void)//配置系统运行频率，SysTick中断间隔等
 {
@@ -105,6 +106,7 @@ static void PrintStackUsage(void)
 }
 #endif
 //******************************************************************************************************************************
+#if 0
 ROM uint8 test[] = "$GPGGA,095813.000,2431.6875,N,11811.1214,E,1,8,0.95,100.4,M,12.1,M,,*5F\r\n";
 
 static __TASK void TaskA(void *para)
@@ -112,7 +114,7 @@ static __TASK void TaskA(void *para)
 	while(1)
 	{
 //		Uart1Send((uint8 *)test,sizeof(test)-1);
-		OSTimeDly(OS_TICKS_PER_SEC/1);	
+		OSTimeDly(OS_TICKS_PER_SEC/1);
 	}
 }
 //************************************************************************************************************
@@ -123,6 +125,7 @@ static __TASK void TaskB(void *para)
         OSTimeDly(OS_TICKS_PER_SEC/50);	
 	}
 }
+#endif
 //************************************************************************************************************
 //__TASK void TaskC(void *para)
 //{
@@ -150,10 +153,12 @@ static __TASK void TaskStart(void *para)
     uint8 timeCnt = 0;
 
 	Initial();
+    ciu98m25_init();
+    
     OS_TASK_CREATE(TaskUart1, YOS_NULL, TaskUart1Stack, 0);
 //========用户相关初始化==========================================
-	OS_TASK_CREATE(TaskA, YOS_NULL, TaskAStack, 1);	
-	OS_TASK_CREATE(TaskB, YOS_NULL, TaskBStack, 2);
+//	OS_TASK_CREATE(TaskA, YOS_NULL, TaskAStack, 1);	
+//	OS_TASK_CREATE(TaskB, YOS_NULL, TaskBStack, 2);
 //	OS_TASK_CREATE(TaskC, YOS_NULL, TaskCStack, 3);
 
 	InitWDT();

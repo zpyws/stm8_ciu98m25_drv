@@ -12,8 +12,8 @@ OS_SEM_t SemUart1Tx;//串口1发送信号量
 OS_SEM_t SemUart1TxInt;//发送中断的标志
 OS_SEM_t SemUart1RxOver;//串口1一帧数据已接收完成(接收超时)
 
-uint8 Uart1RxBuff[64];
-uint8 Uart1RxPtr = 0;//接收指针
+uint8 Uart1RxBuff[255];
+uint16 Uart1RxPtr = 0;//接收指针
 
 uint8 Uart1TxBuff[16];
 uint8 Uart1TxPtr = 0;//发送指针

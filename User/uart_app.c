@@ -1,5 +1,5 @@
 #include "common_zpyws.h"
-//******************************************************************************************************************************
+#include "ciu98m25.h"
 //******************************************************************************************************************************
 #if 0
 static sint8 uart_rx_data_resolve(uint8 *p, uint8 len)
@@ -27,12 +27,22 @@ static sint8 uart_rx_data_resolve(uint8 *p, uint8 len)
 }
 #endif
 //****************************************************************************************************************************
-extern void UartRxDataProcess(uint8 *buff, uint8 len)
+static uint8 spu_rx_buff[253];
+extern void UartRxDataProcess(uint8 *buff, uint16 len)
 {
+  	sint16 result;
+	
 	DIS_UART_RX_INT();
 //=======================================================================
-	Uart1Send((uint8 *)Uart1RxBuff,Uart1RxPtr);
 //	uart_rx_data_resolve(buff, len);
+	
+	result = ciu98m25_transfer(Uart1RxBuff, Uart1RxPtr, spu_rx_buff, sizeof(spu_rx_buff));
+	
+	if(result<0)UART1_PRINT_STRING("[Y]ciu98m25_transfer failed\r\n");
+	else
+	{
+	  	Uart1Send(spu_rx_buff, result);
+	}
 //=======================================================================
 	Uart1RxPtr = 0;
 	EN_UART_RX_INT();
