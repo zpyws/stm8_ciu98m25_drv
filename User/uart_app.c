@@ -27,7 +27,6 @@ static sint8 uart_rx_data_resolve(uint8 *p, uint8 len)
 }
 #endif
 //****************************************************************************************************************************
-static uint8 spu_rx_buff[253];
 extern void UartRxDataProcess(uint8 *buff, uint16 len)
 {
   	sint16 result;
@@ -35,13 +34,14 @@ extern void UartRxDataProcess(uint8 *buff, uint16 len)
 	DIS_UART_RX_INT();
 //=======================================================================
 //	uart_rx_data_resolve(buff, len);
-	
-	result = ciu98m25_transfer(Uart1RxBuff, Uart1RxPtr, spu_rx_buff, sizeof(spu_rx_buff));
+
+	Uart1RxPtr = sizeof(Uart1RxBuff);	//inhibit new uart rx data getting in
+	result = ciu98m25_transfer(Uart1RxBuff, len, Uart1RxBuff, sizeof(Uart1RxBuff));
 	
 	if(result<0)UART1_PRINT_STRING("[Y]ciu98m25_transfer failed\r\n");
 	else
 	{
-	  	Uart1Send(spu_rx_buff, result);
+  		Uart1Send(Uart1RxBuff, result);
 	}
 //=======================================================================
 	Uart1RxPtr = 0;

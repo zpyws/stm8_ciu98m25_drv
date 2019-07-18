@@ -11,7 +11,7 @@ extern void Uart1PutUint8AsDecimal(uint8 dat);
 //extern uint8 ROM HEX2ASCII[];
 extern OS_SEM_t SemUart1Tx;
 extern OS_SEM_t SemUart1RxOver;//串口1一帧数据已接收完成(接收超时)
-extern uint8 Uart1RxBuff[];
+extern uint8 Uart1RxBuff[480];
 extern uint16 Uart1RxPtr;//串口发送和接收共用的缓冲指针
 //*************************************************************
 #define SBUF                     UART1->DR//51形式的宏定义
