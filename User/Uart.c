@@ -115,7 +115,7 @@ extern void InitUart1(uint32 baudrate)
 #if defined(CPU_STM8Sxxx)
 //2013-01-31 by zpyws
 //此函数是所有要发送的数据位全部发完才退出
-extern uint8 Uart1PutRaw(uint8 *buff,uint8 len)
+extern uint8 Uart1PutRaw(uint8 *buff,uint16 len)
 {
 	uint8 send_len;
 
@@ -257,7 +257,7 @@ extern void Uart1PutUint8AsDecimal(uint8 dat)
 //}
 //********************************************************************************************
 //2013-01-31 by zpyws
-extern boolean Uart1Send(uint8 *buff,uint8 len)
+extern boolean Uart1Send(uint8 *buff,uint16 len)
 {
 	if( OSSemPend( &SemUart1Tx, OS_TICKS_PER_SEC*5 )==OS_NO_ERR )
 	{

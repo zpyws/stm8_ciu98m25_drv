@@ -2,10 +2,10 @@
 #define UART_USER_H
 //*************************************************************
 extern void InitUart1(uint32 baudrate);//∏Ò Ω «8N1
-extern boolean Uart1Send(uint8 *buff,uint8 len);
+extern boolean Uart1Send(uint8 *buff,uint16 len);
 //extern void Uart1PrintString(uint8 * str);
 ////extern void SendToPC32(int32 dat);
-extern uint8 Uart1PutRaw(uint8 *buff,uint8 len);
+extern uint8 Uart1PutRaw(uint8 *buff,uint16 len);
 extern void Uart1PutUint8AsDecimal(uint8 dat);
 //*************************************************************
 //extern uint8 ROM HEX2ASCII[];
